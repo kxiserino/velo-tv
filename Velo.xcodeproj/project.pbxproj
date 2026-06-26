@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		4C7B27262F359CAA00790C74 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C7B26FB2F359CA800790C74 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C7B27022F359CA800790C74;
+			remoteInfo = Velo;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		4C7B27032F359CA800790C74 /* Velo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Velo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C7B27202F359CAA00790C74 /* VeloTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VeloTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -29,10 +40,22 @@
 			path = Velo;
 			sourceTree = "<group>";
 		};
+		4C7B27212F359CAA00790C74 /* VeloTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = VeloTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4C7B27002F359CA800790C74 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C7B27232F359CAA00790C74 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				4C7B27052F359CA800790C74 /* Velo */,
+				4C7B27212F359CAA00790C74 /* VeloTests */,
 				4C7B27042F359CA800790C74 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				4C7B27032F359CA800790C74 /* Velo.app */,
+				4C7B27202F359CAA00790C74 /* VeloTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +108,29 @@
 			productReference = 4C7B27032F359CA800790C74 /* Velo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		4C7B27252F359CAA00790C74 /* VeloTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C7B27282F359CAA00790C74 /* Build configuration list for PBXNativeTarget "VeloTests" */;
+			buildPhases = (
+				4C7B27222F359CAA00790C74 /* Sources */,
+				4C7B27232F359CAA00790C74 /* Frameworks */,
+				4C7B27242F359CAA00790C74 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C7B27272F359CAA00790C74 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4C7B27212F359CAA00790C74 /* VeloTests */,
+			);
+			name = VeloTests;
+			packageProductDependencies = (
+			);
+			productName = VeloTests;
+			productReference = 4C7B27202F359CAA00790C74 /* VeloTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -95,6 +143,10 @@
 				TargetAttributes = {
 					4C7B27022F359CA800790C74 = {
 						CreatedOnToolsVersion = 26.2;
+					};
+					4C7B27252F359CAA00790C74 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 4C7B27022F359CA800790C74;
 					};
 				};
 			};
@@ -113,12 +165,20 @@
 			projectRoot = "";
 			targets = (
 				4C7B27022F359CA800790C74 /* Velo */,
+				4C7B27252F359CAA00790C74 /* VeloTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4C7B27012F359CA800790C74 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C7B27242F359CAA00790C74 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +195,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4C7B27222F359CAA00790C74 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4C7B27272F359CAA00790C74 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C7B27022F359CA800790C74 /* Velo */;
+			targetProxy = 4C7B27262F359CAA00790C74 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4C7B27152F359CAA00790C74 /* Debug */ = {
@@ -158,7 +233,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = bloo.kaiser.Velo;
+				PRODUCT_BUNDLE_IDENTIFIER = net.k4is3r.velo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -190,7 +265,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = bloo.kaiser.Velo;
+				PRODUCT_BUNDLE_IDENTIFIER = net.k4is3r.velo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -199,6 +274,58 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+		4C7B27292F359CAA00790C74 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3XLSV4TJT9;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.k4is3r.velo.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Velo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Velo";
+			};
+			name = Debug;
+		};
+		4C7B272A2F359CAA00790C74 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3XLSV4TJT9;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.k4is3r.velo.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Velo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Velo";
 			};
 			name = Release;
 		};
@@ -340,6 +467,15 @@
 			buildConfigurations = (
 				4C7B27152F359CAA00790C74 /* Debug */,
 				4C7B27162F359CAA00790C74 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C7B27282F359CAA00790C74 /* Build configuration list for PBXNativeTarget "VeloTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C7B27292F359CAA00790C74 /* Debug */,
+				4C7B272A2F359CAA00790C74 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

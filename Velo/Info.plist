@@ -6,5 +6,17 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>TWITCH_ACCESS_TOKEN</key>
+	<string></string>
+	<key>TWITCH_CHAT_USERNAME</key>
+	<string></string>
+	<key>TWITCH_CLIENT_ID</key>
+	<string>dp49p1zlizsebtisicn9pz8cm17vke</string>
+	<key>TWITCH_REFRESH_TOKEN</key>
+	<string></string>
+	<key>TWITCH_TOKEN_EXPIRATION_EPOCH</key>
+	<string></string>
+	<key>TWITCH_USER_ID</key>
+	<string></string>
 </dict>
 </plist>

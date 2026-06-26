@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "velo-app-icon-glow-1x.png",
       "idiom" : "tv",
       "scale" : "1x"
     },
     {
+      "filename" : "velo-app-icon-glow-2x.png",
       "idiom" : "tv",
       "scale" : "2x"
     }

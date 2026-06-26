@@ -1,83 +1,121 @@
-//
-//  ContentView.swift
-//  Velo
-//
-//  Created by Fraser on 06/02/2026.
-//
-
 import SwiftUI
-import CoreData
 
-struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
+private enum AppTab: String, CaseIterable, Hashable {
+    case home
+    case search
+    case settings
 
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
-    var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .search: "Search"
+        case .settings: "Settings"
         }
     }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+    var systemImage: String {
+        switch self {
+        case .home: "house"
+        case .search: "magnifyingglass"
+        case .settings: "gearshape"
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
+struct ContentView: View {
+    @ObservedObject var container: AppContainer
+    @AppStorage("app.selectedTab") private var selectedTabRawValue = AppTab.home.rawValue
+    @State private var homeResetToken = 0
+    @State private var searchResetToken = 0
+    @State private var settingsResetToken = 0
+    @State private var activeStream: LiveStream?
 
-#Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    var body: some View {
+        TabView(selection: tabSelectionBinding) {
+            Tab("Home", systemImage: AppTab.home.systemImage, value: AppTab.home) {
+                tabBackground {
+                    HomeView(
+                        container: container,
+                        resetToken: homeResetToken,
+                        onOpenStream: { stream in
+                            activeStream = stream
+                        }
+                    )
+                }
+            }
+
+            Tab("Search", systemImage: AppTab.search.systemImage, value: AppTab.search) {
+                tabBackground {
+                    SearchView(
+                        container: container,
+                        resetToken: searchResetToken,
+                        onOpenStream: { stream in
+                            activeStream = stream
+                        }
+                    )
+                }
+            }
+
+            Tab("Settings", systemImage: AppTab.settings.systemImage, value: AppTab.settings) {
+                tabBackground {
+                    SettingsView(
+                        settings: container.settings,
+                        clientPolicy: container.twitchPolicy,
+                        sessionStore: container.sessionStore,
+                        libraryStore: container.libraryStore,
+                        sessionManager: container.authSessionManager,
+                        resetToken: settingsResetToken
+                    )
+                }
+            }
+        }
+        .toolbar(.hidden, for: .navigationBar)
+        .toolbarVisibility(.visible, for: .tabBar)
+        .fullScreenCover(item: $activeStream) { stream in
+            StreamPlayerView(
+                stream: stream,
+                settings: container.settings,
+                clientPolicy: container.twitchPolicy,
+                sessionStore: container.sessionStore,
+                emoteCatalog: container.emoteCatalog,
+                chatBadgeService: container.chatBadgeService,
+                libraryStore: container.libraryStore,
+                authSessionManager: container.authSessionManager,
+                playbackService: container.playbackService
+            )
+        }
+    }
+
+    private var selectedTab: AppTab {
+        AppTab(rawValue: selectedTabRawValue) ?? .home
+    }
+
+    private var tabSelectionBinding: Binding<AppTab> {
+        Binding(
+            get: { selectedTab },
+            set: selectTab
+        )
+    }
+
+    private func selectTab(_ tab: AppTab) {
+        if tab == selectedTab {
+            switch tab {
+            case .home:
+                homeResetToken += 1
+            case .search:
+                searchResetToken += 1
+            case .settings:
+                settingsResetToken += 1
+            }
+        } else {
+            selectedTabRawValue = tab.rawValue
+        }
+    }
+
+    private func tabBackground<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        ZStack {
+            VeloBackground()
+            content()
+        }
+    }
 }
