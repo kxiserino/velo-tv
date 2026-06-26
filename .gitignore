@@ -18,3 +18,6 @@ build/
 *.cer
 *.pem
 *.key
+
+# Generated App Store screenshots can include live third-party stream content.
+screenshots/app-store/
