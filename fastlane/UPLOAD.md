@@ -3,21 +3,29 @@
 Fastlane uploads use an App Store Connect API key. Keep the `.p8` file outside
 the repository, for example in `~/.private_keys`.
 
+Create your local env file:
+
+```sh
+cp .env.example .env
+```
+
+Then fill in `.env` and load it before running Fastlane:
+
+```sh
+set -a
+source .env
+set +a
+```
+
 Upload the current exported IPA:
 
 ```sh
-APP_STORE_CONNECT_API_KEY_ID="..." \
-APP_STORE_CONNECT_API_ISSUER_ID="..." \
-APP_STORE_CONNECT_API_KEY_PATH="$HOME/.private_keys/AuthKey_....p8" \
 fastlane ios upload_build
 ```
 
 Build and upload:
 
 ```sh
-APP_STORE_CONNECT_API_KEY_ID="..." \
-APP_STORE_CONNECT_API_ISSUER_ID="..." \
-APP_STORE_CONNECT_API_KEY_PATH="$HOME/.private_keys/AuthKey_....p8" \
 fastlane ios release_upload
 ```
 
