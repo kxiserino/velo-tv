@@ -1,0 +1,72 @@
+opt_out_usage
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Build a signed App Store Connect IPA for Velo TV"
+  lane :build_app_store do
+    build_app(
+      project: "Velo.xcodeproj",
+      scheme: "Velo",
+      configuration: "Release",
+      destination: "generic/platform=tvOS",
+      archive_path: "/tmp/velo-tv-fastlane/Velo.xcarchive",
+      output_directory: "/tmp/velo-tv-fastlane",
+      output_name: "Velo.ipa",
+      export_method: "app-store",
+      export_team_id: "3XLSV4TJT9",
+      export_options: {
+        method: "app-store",
+        signingStyle: "automatic",
+        teamID: "3XLSV4TJT9",
+        stripSwiftSymbols: true,
+        uploadSymbols: true,
+        manageAppVersionAndBuildNumber: true
+      }
+    )
+  end
+
+  desc "Upload the latest exported IPA to App Store Connect"
+  lane :upload_build do
+    ipa_path = ENV.fetch("VELO_IPA_PATH", "/tmp/velo-tv-export-latest/Velo.ipa")
+
+    api_key = app_store_connect_api_key_from_env
+
+    pilot(
+      app_identifier: "net.k4is3r.velo",
+      ipa: ipa_path,
+      app_platform: "appletvos",
+      api_key: api_key,
+      skip_submission: true,
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Build and upload Velo TV to App Store Connect"
+  lane :release_upload do
+    build_app_store
+    ENV["VELO_IPA_PATH"] = "/tmp/velo-tv-fastlane/Velo.ipa"
+    upload_build
+  end
+end
+
+private_lane :app_store_connect_api_key_from_env do
+  key_id = ENV["APP_STORE_CONNECT_API_KEY_ID"]
+  issuer_id = ENV["APP_STORE_CONNECT_API_ISSUER_ID"]
+  key_filepath = ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+
+  if key_id.to_s.empty? || issuer_id.to_s.empty? || key_filepath.to_s.empty?
+    UI.user_error!(
+      "Set APP_STORE_CONNECT_API_KEY_ID, APP_STORE_CONNECT_API_ISSUER_ID, " \
+      "and APP_STORE_CONNECT_API_KEY_PATH before uploading."
+    )
+  end
+
+  app_store_connect_api_key(
+    key_id: key_id,
+    issuer_id: issuer_id,
+    key_filepath: File.expand_path(key_filepath),
+    duration: 1200,
+    in_house: false
+  )
+end

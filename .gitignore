@@ -19,5 +19,11 @@ build/
 *.pem
 *.key
 
+# Fastlane local output
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
 # Generated App Store screenshots can include live third-party stream content.
 screenshots/app-store/
