@@ -3,6 +3,7 @@ import Foundation
 struct SevenTVService: EmoteProvider {
     private static let maxCatalogBytes = 8 * 1_024 * 1_024
     fileprivate static let allowedImageHosts: Set<String> = ["cdn.7tv.app"]
+    fileprivate static let maxAnimatedFrameCount = 80
 
     private let httpClient: HTTPClient
 
@@ -85,34 +86,69 @@ private struct SevenTVHostPayload: Decodable {
     let files: [SevenTVFilePayload]
 
     func bestURL(allowedHosts: Set<String>) -> URL? {
-        guard let bestFile = preferredFile else {
+        guard let pathComponent = preferredPathComponent else {
             return nil
         }
 
         return EmoteURLPolicy.providerImageURL(
             base: url,
-            pathComponent: bestFile.name,
+            pathComponent: pathComponent,
             allowedHosts: allowedHosts
         )
     }
 
-    private var preferredFile: SevenTVFilePayload? {
+    private var preferredPathComponent: String? {
         let targetWidth = 64
 
-        let animated = files.filter { ($0.frameCount ?? 1) > 1 }
+        let animated = files.filter {
+            ($0.frameCount ?? 1) > 1 &&
+                ($0.frameCount ?? 1) <= SevenTVService.maxAnimatedFrameCount
+        }
         let still = files.filter { ($0.frameCount ?? 1) <= 1 }
 
-        return pickBest(from: animated, targetWidth: targetWidth) ??
-            pickBest(from: still, targetWidth: targetWidth)
+        if let animatedFile = pickBestAnimated(from: animated, targetWidth: targetWidth) {
+            return animatedFile.name
+        }
+
+        if let stillFile = pickBestStill(from: still, targetWidth: targetWidth) {
+            return stillFile.name
+        }
+
+        return pickBestStaticFallback(targetWidth: targetWidth)
     }
 
-    private func pickBest(from files: [SevenTVFilePayload], targetWidth: Int) -> SevenTVFilePayload? {
+    private func pickBestAnimated(from files: [SevenTVFilePayload], targetWidth: Int) -> SevenTVFilePayload? {
+        pickBest(from: files.filter(\.isAnimatedGIF), targetWidth: targetWidth, rank: \.animatedFormatRank)
+    }
+
+    private func pickBestStill(from files: [SevenTVFilePayload], targetWidth: Int) -> SevenTVFilePayload? {
+        pickBest(from: files, targetWidth: targetWidth, rank: \.stillFormatRank)
+    }
+
+    private func pickBestStaticFallback(targetWidth: Int) -> String? {
+        let candidates = files.compactMap { file -> StaticEmoteFile? in
+            guard let staticName = file.staticName, !staticName.isEmpty else { return nil }
+            return StaticEmoteFile(
+                name: staticName,
+                width: file.width,
+                format: Self.format(from: staticName) ?? file.format
+            )
+        }
+
+        return pickBest(from: candidates, targetWidth: targetWidth, rank: \.formatRank)?.name
+    }
+
+    private func pickBest<File: SevenTVFileCandidate>(
+        from files: [File],
+        targetWidth: Int,
+        rank: (File) -> Int
+    ) -> File? {
         let candidates = files.filter { $0.width != nil }
         guard !candidates.isEmpty else { return nil }
 
         return candidates.sorted { lhs, rhs in
-            let lhsRank = lhs.formatRank
-            let rhsRank = rhs.formatRank
+            let lhsRank = rank(lhs)
+            let rhsRank = rank(rhs)
             if lhsRank != rhsRank {
                 return lhsRank < rhsRank
             }
@@ -127,9 +163,28 @@ private struct SevenTVHostPayload: Decodable {
         }
         .first
     }
+
+    private static func format(from path: String) -> String? {
+        path.split(separator: ".").last.map(String.init)
+    }
 }
 
-private struct SevenTVFilePayload: Decodable {
+private protocol SevenTVFileCandidate {
+    var name: String { get }
+    var width: Int? { get }
+}
+
+private struct StaticEmoteFile: SevenTVFileCandidate {
+    let name: String
+    let width: Int?
+    let format: String?
+
+    var formatRank: Int {
+        SevenTVFilePayload.stillFormatRank(for: format)
+    }
+}
+
+private struct SevenTVFilePayload: Decodable, SevenTVFileCandidate {
     let name: String
     let staticName: String?
     let width: Int?
@@ -144,16 +199,35 @@ private struct SevenTVFilePayload: Decodable {
         case format
     }
 
-    var formatRank: Int {
+    var isAnimatedGIF: Bool {
+        (frameCount ?? 1) > 1 && (format ?? "").uppercased() == "GIF"
+    }
+
+    var animatedFormatRank: Int {
         switch (format ?? "").uppercased() {
         case "GIF":
             return 0
-        case "WEBP":
-            return 1
-        case "AVIF":
-            return 2
         default:
+            return 1
+        }
+    }
+
+    var stillFormatRank: Int {
+        Self.stillFormatRank(for: format)
+    }
+
+    static func stillFormatRank(for format: String?) -> Int {
+        switch (format ?? "").uppercased() {
+        case "PNG":
+            return 0
+        case "GIF":
+            return 1
+        case "WEBP":
+            return 2
+        case "AVIF":
             return 3
+        default:
+            return 4
         }
     }
 }
